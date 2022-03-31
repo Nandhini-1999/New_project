@@ -30,12 +30,16 @@ pipeline{
         }
       }
     }
-    
-    //stage('Deploy'){
-      //steps{
-        //bat "mvn jar:jar deploy:deploy -DgeneratePom=false -DrepositoryId=server -Durl=https://nandhini.jfrog.io/artifactory/sample-libs-snapshot -DpomFile=pom.xml -Dfile=target/Demo-0.0.1-SNAPSHOT.jar"
-      //}
-    //}
+    stage("Quality Gate") {
+            steps {
+               waitForQualityGate abortPipeline: true
+            }
+          }
+    stage('Deploy'){
+      steps{
+        bat "mvn jar:jar deploy:deploy -DgeneratePom=false -DrepositoryId=server -Durl=https://nandhini.jfrog.io/artifactory/sample-libs-snapshot -DpomFile=pom.xml -Dfile=target/Demo-0.0.1-SNAPSHOT.jar"
+      }
+    }
     stage('Server'){
     steps{
     rtServer(

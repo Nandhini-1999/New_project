@@ -16,4 +16,10 @@
 <maven.compiler.source>8</maven.compiler.source>
 <maven.compiler.target>8</maven.compiler.target>
 </properties>
+  <distributionManagement>
+  <repository>
+  <id>server</id>
+  <url>https://nandhini.jfrog.io/artifactory/new_project-libs-snapshot</url>
+  </repository>
+  </distributionManagement>
 </project>

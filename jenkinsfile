@@ -4,7 +4,7 @@ pipeline{
   stages{
     stage('Checkout') {
      steps{
-        git credentialsId: '', url: 'https://github.com/Nandhini-1999/New_project.git'
+        git credentialsId: 'Nandhini-1999', url: 'https://github.com/Nandhini-1999/New_project.git'
       }
      }
   stage('Build'){
@@ -22,6 +22,49 @@ pipeline{
       steps{
         bat "mvn package"
       }
+    }
+    stage('Sonar Scan'){
+      steps{
+        withSonarQubeEnv('sonar') {
+        bat "mvn sonar:sonar"
+        }
+      }
+    }
+    
+    //stage('Deploy'){
+      //steps{
+        //bat "mvn jar:jar deploy:deploy -DgeneratePom=false -DrepositoryId=server -Durl=https://nandhini.jfrog.io/artifactory/sample-libs-snapshot -DpomFile=pom.xml -Dfile=target/Demo-0.0.1-SNAPSHOT.jar"
+      //}
+    //}
+    stage('Server'){
+    steps{
+    rtServer(
+    id: "JFrog",
+    url: 'https://nandhini.jfrog.io/artifactory',
+    username: 'Nandhini',
+    password: 'Nandhini_99',
+    bypassProxy: true,
+    timeout: 300
+            )
+        }
+    }
+    stage('Artifactory Upload'){
+    steps{
+    rtUpload(
+    serverId: "JFrog",
+    spec: '''{
+    "files": [
+    {
+    "pattern": "*.jar",
+    "target": "sample-libs-snapshot-local"
+                }
+            ]
+       }''',
+      )
+      rtPublishBuildInfo(
+   serverId: "JFrog"
+        )
+     }
     }
     }
     }
